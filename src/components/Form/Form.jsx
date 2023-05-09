@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { nanoid } from 'nanoid';
+import { ContactsForm, FormLabel, FormText, SubmitButton } from './styled';
 
 export class Form extends Component {
   state = {
@@ -13,10 +13,8 @@ export class Form extends Component {
 
   handleFormSubmit = event => {
     event.preventDefault();
-    const id = nanoid();
-    const { name, number } = this.state;
-    const contact = { id, name, number };
-    this.props.onSubmit(contact);
+
+    this.props.addUserProps({ ...this.state });
     this.reset();
   };
 
@@ -24,34 +22,35 @@ export class Form extends Component {
     this.setState({ name: '', number: '' });
   };
   render() {
+    const { name, number } = this.state;
     return (
-      <form onSubmit={this.handleFormSubmit}>
-        <label>
+      <ContactsForm onSubmit={this.handleFormSubmit}>
+        <FormLabel>
           Name
-          <input
+          <FormText
             type="text"
             name="name"
             pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
             title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
             required
-            value={this.state.name}
+            value={name}
             onChange={this.handleInputChange}
           />
-        </label>
-        <label>
+        </FormLabel>
+        <FormLabel>
           Number
-          <input
+          <FormText
             type="tel"
             name="number"
             pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
             title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
             required
-            value={this.state.number}
+            value={number}
             onChange={this.handleInputChange}
           />
-        </label>
-        <button type="submit">Add contact</button>
-      </form>
+        </FormLabel>
+        <SubmitButton type="submit">Add contact</SubmitButton>
+      </ContactsForm>
     );
   }
 }

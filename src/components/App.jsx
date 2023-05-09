@@ -1,17 +1,51 @@
 import React, { Component } from 'react';
 import { ContactList } from './ContactList';
 import { Form } from './Form';
+import { Filter } from './Filter';
+import { nanoid } from 'nanoid';
 
 export class App extends Component {
   state = {
     contacts: [],
+    filter: '',
   };
 
-  formSubmitHandler = contact => {
-    this.state.contacts.push(contact);
-    console.log(this.state.contacts);
+  deleteContact = contactId => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(({ id }) => id !== contactId),
+    }));
   };
+  formSubmitHandler = contactData => {
+    const { name } = contactData;
+    const isDuplicateName = this.state.contacts
+      .map(contact => contact.name.toLowerCase())
+      .includes(name.toLowerCase());
+
+    if (isDuplicateName) {
+      alert('Contact already exists');
+    } else {
+      const newContact = {
+        id: nanoid(),
+        ...contactData,
+      };
+      this.setState(prevState => ({
+        contacts: [newContact, ...prevState.contacts],
+      }));
+    }
+  };
+
+  changeFilter = event => {
+    const { value } = event.currentTarget;
+    this.setState({ filter: value });
+  };
+
   render() {
+    const { contacts, filter } = this.state;
+    const normalizedFilter = filter.toLowerCase();
+    const visibleContacts = contacts.filter(contact =>
+      contact.name.toLowerCase().includes(normalizedFilter)
+    );
+
     return (
       <div
         style={{
@@ -24,11 +58,31 @@ export class App extends Component {
           color: '#010101',
         }}
       >
-        <h1>Phonebook</h1>
-        <Form onSubmit={this.formSubmitHandler} />
-        <h2>Contacts</h2>
-        {/* <Filter  /> */}
-        <ContactList contacts={this.state.contacts} />
+        <h1
+          style={{
+            fontSize: '35px',
+            fontWeight: 800,
+            marginTop: '0px',
+            marginBottom: '30px',
+          }}
+        >
+          Phonebook
+        </h1>
+        <Form addUserProps={this.formSubmitHandler} />
+        <h2
+          style={{
+            fontSize: '35px',
+            fontWeight: 800,
+            marginTop: '30px',
+          }}
+        >
+          Contacts
+        </h2>
+        <Filter value={filter} onChange={this.changeFilter} />
+        <ContactList
+          contacts={visibleContacts}
+          deleteContact={this.deleteContact}
+        />
       </div>
     );
   }
