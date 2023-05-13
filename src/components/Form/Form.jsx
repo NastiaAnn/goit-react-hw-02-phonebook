@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import { ContactsForm, FormLabel, FormText, SubmitButton } from './styled';
+import PropTypes from 'prop-types';
 
 export class Form extends Component {
+  static propTypes = {
+    addUserProps: PropTypes.func.isRequired,
+  };
+
   state = {
     name: '',
     number: '',
@@ -13,7 +18,6 @@ export class Form extends Component {
 
   handleFormSubmit = event => {
     event.preventDefault();
-
     this.props.addUserProps({ ...this.state });
     this.reset();
   };

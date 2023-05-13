@@ -23,6 +23,7 @@ export class App extends Component {
 
     if (isDuplicateName) {
       alert('Contact already exists');
+      return;
     } else {
       const newContact = {
         id: nanoid(),
